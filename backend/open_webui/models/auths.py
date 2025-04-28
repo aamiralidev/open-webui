@@ -8,6 +8,7 @@ from open_webui.env import SRC_LOG_LEVELS
 from pydantic import BaseModel
 from sqlalchemy import Boolean, Column, String, Text
 from open_webui.utils.auth import verify_password
+from decimal import Decimal
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MODELS"])
@@ -53,6 +54,7 @@ class UserResponse(BaseModel):
     name: str
     role: str
     profile_image_url: str
+    credits: Decimal = Decimal(0)
 
 
 class SigninResponse(Token, UserResponse):

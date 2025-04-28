@@ -1,5 +1,6 @@
 import time
 from typing import Optional
+from decimal import Decimal
 
 from open_webui.internal.db import Base, JSONField, get_db
 
@@ -34,6 +35,7 @@ class User(Base):
     info = Column(JSONField, nullable=True)
 
     oauth_sub = Column(Text, unique=True)
+    credits = Column(BigInteger, default=0)
 
 
 class UserSettings(BaseModel):
@@ -58,7 +60,7 @@ class UserModel(BaseModel):
     info: Optional[dict] = None
 
     oauth_sub: Optional[str] = None
-
+    credits: Decimal = Decimal(0)
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -73,6 +75,7 @@ class UserResponse(BaseModel):
     email: str
     role: str
     profile_image_url: str
+    credits: Decimal = Decimal(0)
 
 
 class UserNameResponse(BaseModel):
