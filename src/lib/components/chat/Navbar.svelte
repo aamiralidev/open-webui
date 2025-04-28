@@ -29,7 +29,14 @@
 
 	import PencilSquare from '../icons/PencilSquare.svelte';
 	import Banner from '../common/Banner.svelte';
+	import { tweened } from 'svelte/motion';
+	import { cubicOut } from 'svelte/easing';
 
+	const animatedCredits = tweened(0, {
+		duration: 400, // how fast (ms)
+		easing: cubicOut
+	});
+	$: animatedCredits.set(Number($user.credits) || 0);
 	const i18n = getContext('i18n');
 
 	export let initNewChat: Function;
@@ -123,8 +130,13 @@
 
 					<!-- Your AI Credits here -->
 					<div class="flex items-center gap-1 px-2 py-1 rounded-md text-sm font-semibold mr-2">
-						<div class="text-lg">1,200</div>
-						<div class="text-xs">AI Credits</div>
+						<!-- Flash/Lightning Icon -->
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+						</svg>
+
+						<!-- Animated credits number -->
+						<div class="text-lg">{Math.floor($animatedCredits).toLocaleString()}</div>
 					</div>
 
 					<Tooltip content={$i18n.t('Controls')}>
