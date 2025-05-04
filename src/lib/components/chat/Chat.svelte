@@ -257,6 +257,14 @@
 				const data = event?.data?.data ?? null;
 
 				if (type === 'status') {
+					if (data.balance){
+						user.update(current => {
+						return {
+							...current,
+							credits: data.balance
+						};
+					});
+					}
 					if (message?.statusHistory) {
 						message.statusHistory.push(data);
 					} else {
