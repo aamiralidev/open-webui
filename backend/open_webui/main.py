@@ -455,6 +455,29 @@ app.state.config = AppConfig(
 app.state.WEBUI_NAME = WEBUI_NAME
 app.state.LICENSE_METADATA = None
 
+@app.middleware("http")
+async def log_response_headers(request, call_next):
+    response = await call_next(request)
+    # Set the CORS header dynamically based on the request origin
+
+    origin = request.headers.get('Origin')
+    if origin and origin in CORS_ALLOW_ORIGIN:
+        response.headers["Access-Control-Allow-Origin"] = origin
+    else:
+        # Fallback if the Origin is not in the allowed list
+        response.headers["Access-Control-Allow-Origin"] = CORS_ALLOW_ORIGIN[0]
+
+    # Optionally, allow additional headers if needed
+    response.headers["Access-Control-Allow-Headers"] = "*"  # Add other headers as needed
+    response.headers["Access-Control-Allow-Methods"] = "*"  # Define allowed methods
+
+    # Logging the headers
+    logging.error(f"Imported cors headers: {CORS_ALLOW_ORIGIN}")
+    logging.error(f"Access-Control-Allow-Origin: {response.headers.get('Access-Control-Allow-Origin')}")
+
+    logging.error(f"Imported cors headers: {CORS_ALLOW_ORIGIN}")
+    logging.error(f"Access-Control-Allow-Origin: {response.headers.get('access-control-allow-origin')}")
+    return response
 
 ########################################
 #
@@ -885,6 +908,14 @@ app.add_middleware(RedirectMiddleware)
 app.add_middleware(SecurityHeadersMiddleware)
 
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=CORS_ALLOW_ORIGIN,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.middleware("http")
 async def commit_session_after_request(request: Request, call_next):
     response = await call_next(request)
@@ -923,15 +954,6 @@ async def inspect_websocket(request: Request, call_next):
                 content={"detail": "Invalid WebSocket upgrade request"},
             )
     return await call_next(request)
-
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=CORS_ALLOW_ORIGIN,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 
 app.mount("/ws", socket_app)

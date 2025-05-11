@@ -55,15 +55,39 @@
   // Props for modal component
   let creditsUsed = 25;
   let totalCredits = 2000;
-  let resetDays = 28;
-  let resetDate = "June 1 at 9am PST";
+  const creditResetsAt = new Date($user.credit_resets_at);
+  const now = new Date();
+
+  const resetDays = Math.ceil((creditResetsAt - now) / (1000 * 60 * 60 * 24));
+
+  const resetDate = creditResetsAt.toLocaleString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: undefined,
+    hour12: true,
+    timeZoneName: 'short',
+    timeZone: 'America/Los_Angeles', // for PST
+  });
   let videoDuration = "5:57";
 
   // Using a sample video from a public source
   let videoSrc =
     "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 
-  import { onMount } from "svelte";
+  import { onMount, tick  } from "svelte";
+
+  import 'plyr/dist/plyr.css';
+  import Plyr from 'plyr';
+
+  let videoEl;
+
+  onMount(() => {
+    new Plyr(videoEl, {
+      controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
+      autoplay: false
+    });
+  });
 
   let video;
   let playing = false;
@@ -108,15 +132,48 @@
     showPointer = showModal;
   }
 
-  function showUpgradeOverlay() {
+  async function showUpgradeOverlay() {
     showOverlay = true;
+    await tick(); // Wait for DOM update
+    window.createLemonSqueezy(); // Re-bind to any new buttons
   }
+
+  async function handleStartFreeTrial() {
+    showOverlay = false; // Step 1: Close your own overlay
+    await tick();               // Wait for DOM update
+
+    // Step 2: Create a temporary button and trigger the click
+    const tempBtn = document.createElement('a');
+    tempBtn.href = 'https://creatorsystems.lemonsqueezy.com/buy/c865fef2-e816-4831-938b-3da1c7cb7322?embed=1';
+    tempBtn.className = 'lemonsqueezy-button';
+    document.body.appendChild(tempBtn);
+    window.createLemonSqueezy();
+    tempBtn.click(); // This will trigger LemonSqueezy's overlay
+    document.body.removeChild(tempBtn); // Clean up
+  }
+
+    async function handleBuyCreatorPlus() {
+    showOverlay = false; // Step 1: Close your own overlay
+    await tick();               // Wait for DOM update
+
+    // Step 2: Create a temporary button and trigger the click
+    const tempBtn = document.createElement('a');
+    tempBtn.href = 'https://creatorsystems.lemonsqueezy.com/buy/c865fef2-e816-4831-938b-3da1c7cb7322?embed=1';
+    tempBtn.className = 'lemonsqueezy-button';
+    document.body.appendChild(tempBtn);
+    window.createLemonSqueezy();
+    tempBtn.click(); // This will trigger LemonSqueezy's overlay
+    document.body.removeChild(tempBtn); // Clean up
+  }
+
+
 
   function closeOverlay() {
     showOverlay = false;
   }
 
   onMount(() => {
+    window.createLemonSqueezy()
     if (video) {
       video.addEventListener("timeupdate", updateProgress);
     }
@@ -224,7 +281,7 @@
 							on:mouseleave={() => (showCreditsTooltip = false)}
 							>
 					  <div
-							class="flex items-center gap-1 px-3 py-1 rounded-full bg-zinc-800 cursor-pointer text-lg font-semibold"
+							class="flex items-center gap-1 px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 cursor-pointer text-lg font-semibold"
 							on:click={() => (showPricingOverlay = true)}
 						>
 							<svg
@@ -251,10 +308,20 @@
           <div class="pointer-triangle"></div>
         {/if}
 
-        <div class="modal-container">
-          <div class="dot"></div>
+        <div class="modal-container bg-white dark:bg-gray-900">
+          
+            <div class="progress-bar-overlay">
+              <div
+                class="progress-fill-overlay"
+                style="width: {Math.ceil((($user.credit_limit - $user.credits) / $user.credit_limit) * 100)}%"
+              ></div>
+            </div>
+            
           <h2 class="credits-header">
-            {creditsUsed} / {totalCredits.toLocaleString()} credits used this month
+            {($user.credit_limit - $user.credits).toLocaleString(undefined, {
+              minimumFractionDigits: 4,
+              maximumFractionDigits: 4
+            })} / {$user.credit_limit} credits used this month
           </h2>
           <p class="reset-info">
             Credits reset in {resetDays} days ({resetDate})
@@ -383,16 +450,16 @@
 						</div>
 
       {#if showOverlay}
-    <div class="overlay">
-      <div class="overlay-modal">
+    <div class="overlay bg-white dark:bg-gray-900">
+      <div class="overlay-modal bg-white dark:bg-gray-900 scrollbar-theme">
         <button class="close-button" on:click={closeOverlay}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
+            class="w-6 h-6 stroke-black dark:stroke-white"
             width="24"
             height="24"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="white"
             stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -403,20 +470,22 @@
         </button>
 
         <div class="content">
-          <h2 class="title">
+          <h1 class="title text-black dark:text-white">
             Wow, You're on Fire! <span class="fire-emoji">🔥</span>
-          </h2>
+          </h1>
 
           <div class="progress-container">
             <div class="progress-bar-overlay">
-              <div class="progress-dot"></div>
               <div
                 class="progress-fill-overlay"
-                style="width: {(creditsUsed / totalCredits) * 100}%"
+                style="width: {Math.ceil((($user.credit_limit - $user.credits) / $user.credit_limit) * 100)}%"
               ></div>
             </div>
             <div class="credits-text">
-              {creditsUsed} / {totalCredits.toLocaleString()} credits used
+            {($user.credit_limit - $user.credits).toLocaleString(undefined, {
+              minimumFractionDigits: 4,
+              maximumFractionDigits: 4
+            })} / {$user.credit_limit} credits used
             </div>
           </div>
 
@@ -465,13 +534,13 @@
                 <p class="mt-8 text-4xl font-bold text-white">$40.33 <span
                         class="text-base font-normal text-white">per month</span></p>
                 <p class="text-sm text-white">$484 billed annually</p>
-                <a 
-                href="https://creatorsystems.lemonsqueezy.com/buy/c865fef2-e816-4831-938b-3da1c7cb7322?embed=1" 
-                class="mt-6 block text-center rounded-md border bg-indigo-600 text-white
+                <button 
+                on:click={handleStartFreeTrial}
+                class="mt-6 block text-center rounded-md border bg-indigo-600 text-white w-full 
                 border-gray-800 px-4 py-3 text-lg font-medium text-indigo-600 hover:border-indigo-300"
                 >
                     Start Free Trial
-                </a>
+                </button>
                 <ul class="mt-6 space-y-2 text-white text-sm text-gray-700">
                     <li class="text-base text-white">This includes:</li>
                     <li class="flex gap-1 items-center"><svg width="18px" height="18px" viewBox="0 0 24 24" fill="none"
@@ -496,7 +565,7 @@
             </div>
             <!-- Creator Plus Plan -->
             <div
-              class="bg-zinc-100 p-8 shadow-lg border border-gray-400"
+              class="bg-zinc-100 p-8 shadow-lg border border-gray-900"
               style="min-width: 450px"
             >
                 <h3 class="text-xl font-semibold text-black">Creator+
@@ -506,10 +575,13 @@
                 <p class="mt-8 text-4xl font-bold text-black">$111 <span class="text-base font-normal text-black">per
                         month</span></p>
                 <p class="text-sm text-black">$1,332 billed annually</p>
-                <a href="https://creatorsystems.lemonsqueezy.com/buy/c865fef2-e816-4831-938b-3da1c7cb7322?embed=1" class="mt-6 block text-center rounded-md border bg-indigo-600 text-white
-                border-indigo-200 px-4 py-3 text-lg font-medium text-indigo-600 hover:border-indigo-300">
+                <button 
+                class="mt-6 block text-center rounded-md border bg-indigo-600 text-white w-full
+                border-indigo-200 px-4 py-3 text-lg font-medium text-indigo-600 hover:border-indigo-300"
+                on:click={handleBuyCreatorPlus}
+                >
                     Subscribe
-                </a>
+                </button>
                 <ul class="mt-6 space-y-2 text-sm text-black">
                     <li class="text-base ">This includes:</li>
                     <li class="flex gap-1 items-center"><svg width="18px" height="18px" viewBox="0 0 24 24" fill="none"
@@ -704,7 +776,6 @@
   }
 
   .modal-container {
-    background-color: var(--color-gray-900, #0d0d0d);
     border-radius: 12px;
     padding: 20px;
     max-width: 480px;
@@ -885,7 +956,6 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.75);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -893,14 +963,12 @@
   }
 
   .overlay-modal {
-    background-color: #111;
     border-radius: 12px;
     width: 90%;
     max-width: 1040px;
     max-height: 90vh;
     overflow-y: auto;
     position: relative;
-    color: white;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
   }
 
@@ -940,7 +1008,6 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    color: white;
   }
 
   .fire-emoji {
@@ -982,7 +1049,6 @@
 
   .credits-text {
     font-size: 16px;
-    color: white;
     text-align: left;
     margin-top: 4px;
   }
@@ -993,7 +1059,6 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    color: white;
   }
 
   .emoji {
@@ -1005,7 +1070,6 @@
     font-weight: 700;
     margin-bottom: 32px;
     line-height: 1.3;
-    color: white;
   }
 
   .testimonial-section {
@@ -1053,7 +1117,6 @@
 
   .trusted-text {
     font-size: 14px;
-    color: #e5e7eb;
   }
 
   .upgrade-button {
@@ -1080,17 +1143,11 @@
   }
 
   .overlay-modal::-webkit-scrollbar-track {
-    background: #222;
     border-radius: 4px;
   }
 
   .overlay-modal::-webkit-scrollbar-thumb {
-    background: #444;
     border-radius: 4px;
-  }
-
-  .overlay-modal::-webkit-scrollbar-thumb:hover {
-    background: #555;
   }
 
   @media (min-width: 640px) {
