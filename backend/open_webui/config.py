@@ -1,3 +1,21 @@
+from pathlib import Path
+
+OPEN_WEBUI_DIR = Path(__file__).parent  # the path containing this file
+print(OPEN_WEBUI_DIR)
+
+BACKEND_DIR = OPEN_WEBUI_DIR.parent  # the path containing this file
+BASE_DIR = BACKEND_DIR.parent  # the path containing the backend/
+
+print(BACKEND_DIR)
+print(BASE_DIR)
+
+try:
+    from dotenv import find_dotenv, load_dotenv
+
+    load_dotenv(find_dotenv(str(BASE_DIR / ".env")))
+except ImportError:
+    print("dotenv not installed, skipping...")
+
 import json
 import logging
 import os
@@ -1227,9 +1245,9 @@ def validate_cors_origin(origin):
 # For production, you should only need one host as
 # fastapi serves the svelte-kit built frontend and backend from the same host and port.
 # To test CORS_ALLOW_ORIGIN locally, you can set something like
-# CORS_ALLOW_ORIGIN=http://localhost:5173;http://localhost:8080
+CORS_ALLOW_ORIGIN=["http://64.91.241.129:5173"]
 # in your .env file depending on your frontend port, 5173 in this case.
-CORS_ALLOW_ORIGIN = os.environ.get("CORS_ALLOW_ORIGIN", "*").split(";")
+# CORS_ALLOW_ORIGIN = os.environ.get("CORS_ALLOW_ORIGIN", "*").split(";")
 
 if "*" in CORS_ALLOW_ORIGIN:
     log.warning(

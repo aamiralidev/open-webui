@@ -7,10 +7,11 @@ from open_webui.internal.db import Base, JSONField, get_db
 
 from open_webui.models.chats import Chats
 from open_webui.models.groups import Groups
+from datetime import datetime, timedelta
 
 
 from pydantic import BaseModel, ConfigDict
-from sqlalchemy import BigInteger, Column, String, Text
+from sqlalchemy import BigInteger, Column, String, Text, DateTime
 
 ####################
 # User DB Schema
@@ -36,6 +37,11 @@ class User(Base):
 
     oauth_sub = Column(Text, unique=True)
     credits = Column(BigInteger, default=0)
+    credit_limit = Column(BigInteger, default=0)
+    subscription = Column(String, nullable=True)
+    subscription_status = Column(String, nullable=True)
+    last_refreshed_at = Column(DateTime, nullable=True)
+    credit_resets_at = Column(DateTime, nullable=True, default=None)
 
 
 class UserSettings(BaseModel):
@@ -61,7 +67,12 @@ class UserModel(BaseModel):
 
     oauth_sub: Optional[str] = None
     credits: Decimal = Decimal(0)
+    credit_limit: Decimal = Decimal(0)
+    subscription: Optional[str]
+    subscription_status: Optional[str]
+    last_refreshed_at: Optional[datetime]
     model_config = ConfigDict(from_attributes=True)
+    credit_resets_at: Optional[datetime] = None
 
 
 ####################
@@ -76,6 +87,11 @@ class UserResponse(BaseModel):
     role: str
     profile_image_url: str
     credits: Decimal = Decimal(0)
+    subscription: Optional[str]
+    subscription_status: Optional[str]
+    last_refreshed_at: Optional[datetime]
+    credit_limit: Decimal = Decimal(0)
+    credit_resets_at: Optional[datetime] = None
 
 
 class UserNameResponse(BaseModel):
@@ -98,6 +114,33 @@ class UserUpdateForm(BaseModel):
 
 
 class UsersTable:
+
+    def refresh_user_credits(self, user: User):
+        now = datetime.utcnow()
+
+        # Skip if no reset time
+        if user.credit_resets_at is None:
+            return
+
+        # Skip if reset time hasn't passed yet
+        if now < user.credit_resets_at:
+            return
+
+        # Check subscription status
+        if user.subscription_status != "active":
+            return
+
+        # Determine credit allocation based on subscription
+        credit_reset_value = 0
+        if user.subscription == "creator":
+            credit_reset_value = 5000
+        elif user.subscription == "creator+":
+            credit_reset_value = 20000
+
+        if credit_reset_value:
+            user.credits = credit_reset_value
+            user.credit_resets_at = now + timedelta(days=30)
+
     def insert_new_user(
         self,
         id: str,
@@ -134,6 +177,8 @@ class UsersTable:
         try:
             with get_db() as db:
                 user = db.query(User).filter_by(id=id).first()
+                self.refresh_user_credits(user)
+                db.commit()
                 return UserModel.model_validate(user)
         except Exception:
             return None
@@ -142,6 +187,8 @@ class UsersTable:
         try:
             with get_db() as db:
                 user = db.query(User).filter_by(api_key=api_key).first()
+                self.refresh_user_credits(user)
+                db.commit()
                 return UserModel.model_validate(user)
         except Exception:
             return None
@@ -150,6 +197,8 @@ class UsersTable:
         try:
             with get_db() as db:
                 user = db.query(User).filter_by(email=email).first()
+                self.refresh_user_credits(user)
+                db.commit()
                 return UserModel.model_validate(user)
         except Exception:
             return None
@@ -158,6 +207,8 @@ class UsersTable:
         try:
             with get_db() as db:
                 user = db.query(User).filter_by(oauth_sub=sub).first()
+                self.refresh_user_credits(user)
+                db.commit()
                 return UserModel.model_validate(user)
         except Exception:
             return None

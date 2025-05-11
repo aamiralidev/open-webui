@@ -219,7 +219,7 @@
 						</Menu>
 					{/if}
 					<!-- Your AI Credits here -->
-					<div class="button-wrapper"
+					<div class="relative w-fit mx-auto my-5"
 							on:mouseenter={() => (showCreditsTooltip = true)}
 							on:mouseleave={() => (showCreditsTooltip = false)}
 							>
@@ -278,7 +278,7 @@
             to a power user plan to unlock more credits and features!
           </p>
 
-          <p class="footnote">
+          <p class="footnote text-gray-500 dark:text-gray-500">
             * Unused credits don't roll over to the next month
           </p>
 
@@ -661,17 +661,6 @@
 
 
 <style>
-  main {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    padding: 2rem;
-  }
-
-  h1 {
-    margin-bottom: 2rem;
-  }
 
   .button-wrapper {
     position: relative;
@@ -715,7 +704,7 @@
   }
 
   .modal-container {
-    background-color: white;
+    background-color: var(--color-gray-900, #0d0d0d);
     border-radius: 12px;
     padding: 20px;
     max-width: 480px;
@@ -742,7 +731,6 @@
     margin: 0;
     margin-top: 10px;
     padding-left: 15px;
-    color: #111827;
   }
 
   .reset-info {
@@ -774,19 +762,16 @@
     font-size: 16px;
     font-weight: 600;
     margin: 0 0 10px 0;
-    color: #111827;
   }
 
   .explanation {
     font-size: 14px;
     line-height: 1.5;
-    color: #4b5563;
     margin-bottom: 15px;
   }
 
   .footnote {
     font-size: 12px;
-    color: #6b7280;
     margin-bottom: 15px;
   }
 
@@ -904,7 +889,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 100000;
   }
 
   .overlay-modal {

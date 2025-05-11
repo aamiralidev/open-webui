@@ -9,6 +9,8 @@ from pydantic import BaseModel
 from sqlalchemy import Boolean, Column, String, Text
 from open_webui.utils.auth import verify_password
 from decimal import Decimal
+from datetime import datetime
+
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MODELS"])
@@ -55,6 +57,12 @@ class UserResponse(BaseModel):
     role: str
     profile_image_url: str
     credits: Decimal = Decimal(0)
+    credit_limit: Decimal = Decimal(0)
+    subscription: Optional[str]
+    subscription_status: Optional[str]
+    last_refreshed_at: Optional[datetime]
+    credit_resets_at: Optional[datetime] = None
+
 
 
 class SigninResponse(Token, UserResponse):
