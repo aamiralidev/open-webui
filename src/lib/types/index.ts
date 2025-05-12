@@ -13,3 +13,11 @@ export enum TTS_RESPONSE_SPLIT {
 	PARAGRAPHS = 'paragraphs',
 	NONE = 'none'
 }
+
+export interface ModelPricingModel {
+	model_id: string;
+	max_output_tokens: number;
+	input_price_per_million_token: string;
+	output_price_per_million_token: string;
+}
+

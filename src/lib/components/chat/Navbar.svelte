@@ -49,12 +49,8 @@
 }
   let showPricingOverlay = false;
   let showCreditsTooltip = false;
-	let buttonText = "Add more credits";
-  let buttonColor = "#6366f1";
 
   // Props for modal component
-  let creditsUsed = 25;
-  let totalCredits = 2000;
   const creditResetsAt = new Date($user.credit_resets_at);
   const now = new Date();
 
@@ -69,25 +65,13 @@
     timeZoneName: 'short',
     timeZone: 'America/Los_Angeles', // for PST
   });
-  let videoDuration = "5:57";
 
+  let videoDuration = "5:57";
   // Using a sample video from a public source
   let videoSrc =
     "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 
   import { onMount, tick  } from "svelte";
-
-  import 'plyr/dist/plyr.css';
-  import Plyr from 'plyr';
-
-  let videoEl;
-
-  onMount(() => {
-    new Plyr(videoEl, {
-      controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
-      autoplay: false
-    });
-  });
 
   let video;
   let playing = false;
@@ -340,7 +324,7 @@
           </p>
 
           <p class="explanation">
-            You have {totalCredits.toLocaleString()} credits per month. Once you
+            You have {$user.credit_limit.toLocaleString()} credits per month. Once you
             run out of credits... You'll have to wait until next month or upgrade
             to a power user plan to unlock more credits and features!
           </p>

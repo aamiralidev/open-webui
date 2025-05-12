@@ -68,9 +68,9 @@ class UserModel(BaseModel):
     oauth_sub: Optional[str] = None
     credits: Decimal = Decimal(0)
     credit_limit: Decimal = Decimal(0)
-    subscription: Optional[str]
-    subscription_status: Optional[str]
-    last_refreshed_at: Optional[datetime]
+    subscription: Optional[str] = None 
+    subscription_status: Optional[str] = None 
+    last_refreshed_at: Optional[datetime] = None
     model_config = ConfigDict(from_attributes=True)
     credit_resets_at: Optional[datetime] = None
 

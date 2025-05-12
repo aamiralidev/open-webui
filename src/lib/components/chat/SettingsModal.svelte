@@ -635,6 +635,28 @@
 								</div>
 								<div class=" self-center">{$i18n.t('About')}</div>
 							</button>
+						{:else if tabId === 'pricing'}
+							<button
+								class="px-0.5 py-1 min-w-fit rounded-lg flex-1 md:flex-none flex text-left transition {selectedTab ===
+								'about'
+									? ''
+									: ' text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'}"
+								on:click={() => {
+									selectedTab = 'pricing';
+								}}
+							>
+								<div class=" self-center mr-2">
+									<svg 
+										xmlns="http://www.w3.org/2000/svg" 
+										viewBox="0 0 24 24"
+										fill="currentColor"
+										class="w-5 h-5"
+									>
+										<path d="M9 2a1 1 0 011 1v1h4V3a1 1 0 112 0v1h1a2 2 0 012 2v1h1a1 1 0 110 2h-1v4h1a1 1 0 110 2h-1v1a2 2 0 01-2 2h-1v1a1 1 0 11-2 0v-1h-4v1a1 1 0 11-2 0v-1H8a2 2 0 01-2-2v-1H5a1 1 0 110-2h1V9H5a1 1 0 110-2h1V6a2 2 0 012-2h1V3a1 1 0 011-1zm1 5a1 1 0 100 2h4a1 1 0 100-2h-4zm0 4a1 1 0 000 2h2a1 1 0 100-2h-2zm0 4a1 1 0 100 2h4a1 1 0 100-2h-4z" />
+									</svg>
+								</div>
+								<div class=" self-center">Model Pricing</div>
+							</button>
 						{:else if tabId === 'admin'}
 							{#if $user?.role === 'admin'}
 								<button
@@ -727,6 +749,8 @@
 					/>
 				{:else if selectedTab === 'about'}
 					<About />
+				{:else if selectedTab === 'pricing'}
+					<ModelPricing />
 				{/if}
 			</div>
 		</div>

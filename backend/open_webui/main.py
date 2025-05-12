@@ -76,7 +76,8 @@ from open_webui.routers import (
     tools,
     users,
     utils,
-    lemon_squeezy
+    lemon_squeezy,
+    pricing
 )
 
 from open_webui.routers.retrieval import (
@@ -994,6 +995,8 @@ app.include_router(
 )
 app.include_router(utils.router, prefix="/api/v1/utils", tags=["utils"])
 app.include_router(lemon_squeezy.router, prefix="/api/v1/lemon_squeezy", tags=["lemon_squeezy"])
+app.include_router(pricing.router, prefix="/api/v1/model-pricing", tags=["model-pricing"])
+
 
 
 try:
