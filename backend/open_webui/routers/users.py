@@ -226,6 +226,11 @@ async def update_user_info_by_session_user(
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=ERROR_MESSAGES.USER_NOT_FOUND,
+                detail=ERROR_MESSAGES.USER_NOT_FOUND,
+                detail=ERROR_MESSAGES.USER_NOT_FOUND,
+                detail=ERROR_MESSAGES.USER_NOT_FOUND,
+                detail=ERROR_MESSAGES.USER_NOT_FOUND,
+                detail=ERROR_MESSAGES.USER_NOT_FOUND,
             )
     else:
         raise HTTPException(

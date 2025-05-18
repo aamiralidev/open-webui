@@ -46,6 +46,7 @@
 	import UpdateInfoToast from '$lib/components/layout/UpdateInfoToast.svelte';
 	import { get } from 'svelte/store';
 	import Spinner from '$lib/components/common/Spinner.svelte';
+	import UpgradeOverlay from '$lib/components/chat/Navbar/UpgradeOverlay.svelte'
 
 	const i18n = getContext('i18n');
 
@@ -256,7 +257,7 @@
 		class=" text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-900 h-screen max-h-[100dvh] overflow-auto flex flex-row justify-end"
 	>
 		{#if !['user', 'admin'].includes($user?.role)}
-			<AccountPending />
+			<UpgradeOverlay closeOverlay={()=>{}} onboarding={true} />
 		{:else if localDBChats.length > 0}
 			<div class="fixed w-full h-full flex z-50">
 				<div

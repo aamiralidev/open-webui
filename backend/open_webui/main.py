@@ -472,12 +472,6 @@ async def log_response_headers(request, call_next):
     response.headers["Access-Control-Allow-Headers"] = "*"  # Add other headers as needed
     response.headers["Access-Control-Allow-Methods"] = "*"  # Define allowed methods
 
-    # Logging the headers
-    logging.error(f"Imported cors headers: {CORS_ALLOW_ORIGIN}")
-    logging.error(f"Access-Control-Allow-Origin: {response.headers.get('Access-Control-Allow-Origin')}")
-
-    logging.error(f"Imported cors headers: {CORS_ALLOW_ORIGIN}")
-    logging.error(f"Access-Control-Allow-Origin: {response.headers.get('access-control-allow-origin')}")
     return response
 
 ########################################
@@ -991,6 +985,10 @@ app.include_router(groups.router, prefix="/api/v1/groups", tags=["groups"])
 app.include_router(files.router, prefix="/api/v1/files", tags=["files"])
 app.include_router(functions.router, prefix="/api/v1/functions", tags=["functions"])
 app.include_router(
+                detail=ERROR_MESSAGES.USER_NOT_FOUND,
+                detail=ERROR_MESSAGES.USER_NOT_FOUND,
+                detail=ERROR_MESSAGES.USER_NOT_FOUND,
+                detail=ERROR_MESSAGES.USER_NOT_FOUND,
     evaluations.router, prefix="/api/v1/evaluations", tags=["evaluations"]
 )
 app.include_router(utils.router, prefix="/api/v1/utils", tags=["utils"])

@@ -952,6 +952,8 @@ ENABLE_SIGNUP = PersistentConfig(
         else os.environ.get("ENABLE_SIGNUP", "True").lower() == "true"
     ),
 )
+logging.error(f"Early value of enable signup: {ENABLE_SIGNUP.value}")
+logging.error(f"Early value of webui_auth: {WEBUI_AUTH}")
 
 ENABLE_LOGIN_FORM = PersistentConfig(
     "ENABLE_LOGIN_FORM",

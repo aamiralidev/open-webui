@@ -398,3 +398,12 @@ input[type='number'] {
 .hljs-strong {
 	font-weight: 700;
 }
+
+.s-CQzCIXq4wXlR {
+	z-index: auto;
+}
+@media (max-width: 760px) {
+  .s-CQzCIXq4wXlR {
+    z-index: revert-layer !important;
+	}
+}
