@@ -5,28 +5,12 @@
 
   import VideoPlayer from "./VideoPlayer.svelte";
   import { user } from "$lib/stores";
-  import { onMount, tick } from 'svelte';
+  import { onMount, tick, onDestroy } from 'svelte';
   let tooltipEl;
   
-
-  onMount(async () => {
-    await tick(); // wait for DOM to render
-
-    const tooltipRect = tooltipEl?.getBoundingClientRect();
-    const viewportWidth = window.innerWidth;
-
-    if (tooltipRect && tooltipRect.right > viewportWidth) {
-      // Tooltip overflows to the right, shift it left
-      const overflowAmount = tooltipRect.right - viewportWidth;
-      tooltipEl.style.left = `calc(-50% - ${overflowAmount + 10}px)`; // Add 10px margin
-    }
-
-    if (tooltipRect && tooltipRect.left < 0) {
-      // Tooltip overflows to the left, shift it right
-      const overflowAmount = Math.abs(tooltipRect.left);
-      tooltipEl.style.left = `calc(-50% + ${overflowAmount + 10}px)`;
-    }
-  });
+  console.log("User credits remaining: ", $user.credits)
+  console.log("User credits limit: ", $user.credit_limit)
+  console.log("User credits used: ", $user.credit_limit - $user.credits)
 
   // Props for modal component
   const now = new Date();
@@ -63,7 +47,7 @@
     </div>
 
     <h2 class="credits-header">
-      {formatCredits($user.credit_limit - $user.credits)} / {formatCredits($user.credit_limit)} credits used this month
+      {formatCredits($user.credit_limit - $user.credits)} / {formatCredits($user.credit_limit)} credits used
     </h2>
     <p class="reset-info">
       Credits reset in {resetDays} days ({resetDate})
@@ -99,7 +83,7 @@
   .modal-wrapper {
     position: absolute;
     top: calc(100% + 10px);
-    left: 50%;
+    left: 30%;
     transform: translateX(-50%);
     z-index: 100000;
     width: 480px;
@@ -195,5 +179,14 @@
     border-radius: 4px;
     width: 1%;
   }
+
+@media (max-width: 500px) {
+  .modal-wrapper {
+    width: 90vw; /* fallback for very narrow screens */
+    top: 80px;
+    left: 50vw;
+    position: fixed;
+  }
+}
 
 </style>

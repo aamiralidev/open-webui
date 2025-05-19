@@ -113,6 +113,12 @@ class UserUpdateForm(BaseModel):
     password: Optional[str] = None
 
 
+CREDIT_PLANS = {
+    'creator': 30000,
+    'creator+': 80000,
+    'on_trial': 5000,
+}
+
 class UsersTable:
 
     def refresh_user_credits(self, user: User):
@@ -131,14 +137,11 @@ class UsersTable:
             return
 
         # Determine credit allocation based on subscription
-        credit_reset_value = 0
-        if user.subscription == "creator":
-            credit_reset_value = 5000
-        elif user.subscription == "creator+":
-            credit_reset_value = 20000
+        credit_amount = CREDIT_PLANS.get(user.subscription)
 
-        if credit_reset_value:
-            user.credits = credit_reset_value
+        if credit_amount:
+            user.credits = credit_amount
+            user.credit_limit = credit_amount
             user.credit_resets_at = now + timedelta(days=30)
 
     def insert_new_user(

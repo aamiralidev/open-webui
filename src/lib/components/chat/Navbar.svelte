@@ -251,7 +251,7 @@ function hideTooltip() {
 <div
   class="relative w-fit mx-auto my-5"
   on:mouseenter={showTooltip}
-  on:mouseleave={hideTooltip}
+	on:mouseleave={hideTooltip}
 	data-credits-trigger
 >
   <div
