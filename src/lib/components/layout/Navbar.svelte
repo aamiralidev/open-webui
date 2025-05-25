@@ -27,6 +27,7 @@
 	import { stringify } from 'postcss';
 	import PencilSquare from '../icons/PencilSquare.svelte';
 	import Plus from '../icons/Plus.svelte';
+	import { display } from 'html2canvas-pro/dist/types/css/property-descriptors/display';
 
 	const i18n = getContext('i18n');
 
@@ -50,11 +51,12 @@
 	></div>
 
 	<div class=" flex max-w-full w-full mx-auto px-1 pt-0.5 bg-transparent">
-		<div class="flex items-center w-full max-w-full">
+		<div class="flex items-center w-full max-w-full" style="flex-wrap: wrap; justify-content: end;">
 			<div
 				class="{$showSidebar
 					? 'md:hidden'
-					: ''} mr-1 self-start flex flex-none items-center text-gray-600 dark:text-gray-400"
+					: ''} mr-1 self-start flex items-center text-gray-600 dark:text-gray-400"
+				style="flex-wrap: wrap;"
 			>
 				<button
 					id="sidebar-toggle-button"
@@ -80,7 +82,10 @@
 				{/if}
 			</div>
 
-			<div class="self-start flex flex-none items-center text-gray-600 dark:text-gray-400">
+			<div
+				class="self-start flex items-center text-gray-600 dark:text-gray-400"
+				style="flex-wrap: wrap;"
+			>
 				<!-- <div class="md:hidden flex self-center w-[1px] h-5 mx-2 bg-gray-300 dark:bg-stone-700" /> -->
 				{#if shareEnabled && chat && (chat.id || $temporaryChatEnabled)}
 					<Menu

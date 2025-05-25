@@ -26,8 +26,8 @@
 	import UserMenu from '$lib/components/layout/Sidebar/UserMenu.svelte';
 	import MenuLines from '../icons/MenuLines.svelte';
 	import AdjustmentsHorizontal from '../icons/AdjustmentsHorizontal.svelte';
-  import UpgradeOverlay from './Navbar/UpgradeOverlay.svelte'
-  import CreditsExplanationTooltip from './Navbar/CreditsExplanationTooltip.svelte'
+	import UpgradeOverlay from './Navbar/UpgradeOverlay.svelte';
+	import CreditsExplanationTooltip from './Navbar/CreditsExplanationTooltip.svelte';
 
 	import PencilSquare from '../icons/PencilSquare.svelte';
 	import Banner from '../common/Banner.svelte';
@@ -43,119 +43,116 @@
 	});
 	$: animatedCredits.set(Number($user.credits) || 0);
 	$: if ($user && $user.credits !== undefined) {
-    animatedCredits.set(Number($user.credits) || 0);
-}
+		animatedCredits.set(Number($user.credits) || 0);
+	}
 
-let hideTimeout;
+	let hideTimeout;
 
-function formatCredits(numStr) {
-	const num = Number(numStr)
-  const [int, dec] = num.toFixed(4).split('.');
-  return int.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ',' + dec;
-}
+	function formatCredits(numStr) {
+		const num = Number(numStr);
+		const [int, dec] = num.toFixed(4).split('.');
+		return int.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ',' + dec;
+	}
 
-function showTooltip() {
-  clearTimeout(hideTimeout);
-  showCreditsTooltip = true;
-}
+	function showTooltip() {
+		clearTimeout(hideTimeout);
+		showCreditsTooltip = true;
+	}
 
-function hideTooltip() {
-  hideTimeout = setTimeout(() => {
-    showCreditsTooltip = false;
-  }, 150); // Adjust as needed
-}
-  let showPricingOverlay = false;
-  let showCreditsTooltip = false;
+	function hideTooltip() {
+		hideTimeout = setTimeout(() => {
+			showCreditsTooltip = false;
+		}, 150); // Adjust as needed
+	}
+	let showPricingOverlay = false;
+	let showCreditsTooltip = false;
 
-  // Props for modal component
-  const creditResetsAt = new Date($user.credit_resets_at);
-  const now = new Date();
+	// Props for modal component
+	const creditResetsAt = new Date($user.credit_resets_at);
+	const now = new Date();
 
-  const resetDays = Math.ceil((creditResetsAt - now) / (1000 * 60 * 60 * 24));
+	const resetDays = Math.ceil((creditResetsAt - now) / (1000 * 60 * 60 * 24));
 
-  const resetDate = creditResetsAt.toLocaleString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: undefined,
-    hour12: true,
-    timeZoneName: 'short',
-    timeZone: 'America/Los_Angeles', // for PST
-  });
+	const resetDate = creditResetsAt.toLocaleString('en-US', {
+		month: 'long',
+		day: 'numeric',
+		hour: 'numeric',
+		minute: undefined,
+		hour12: true,
+		timeZoneName: 'short',
+		timeZone: 'America/Los_Angeles' // for PST
+	});
 
-  let videoDuration = "5:57";
-  // Using a sample video from a public source
-  let videoSrc =
-    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+	let videoDuration = '5:57';
+	// Using a sample video from a public source
+	let videoSrc =
+		'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
 
-  import { onMount, tick  } from "svelte";
+	import { onMount, tick } from 'svelte';
 
-  let video;
-  let playing = false;
-  let progress = 0;
-  let currentTime = "0:00";
-  let showVideoControls = true;
-  let showPointer = false;
-  let showModal = false;
-  let showOverlay = false;
+	let video;
+	let playing = false;
+	let progress = 0;
+	let currentTime = '0:00';
+	let showVideoControls = true;
+	let showPointer = false;
+	let showModal = false;
+	let showOverlay = false;
 
-  function togglePlay() {
-    if (video.paused) {
-      video.play();
-      playing = true;
-    } else {
-      video.pause();
-      playing = false;
-    }
-  }
+	function togglePlay() {
+		if (video.paused) {
+			video.play();
+			playing = true;
+		} else {
+			video.pause();
+			playing = false;
+		}
+	}
 
-  function formatTime(seconds) {
-    const minutes = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${minutes}:${secs < 10 ? "0" + secs : secs}`;
-  }
+	function formatTime(seconds) {
+		const minutes = Math.floor(seconds / 60);
+		const secs = Math.floor(seconds % 60);
+		return `${minutes}:${secs < 10 ? '0' + secs : secs}`;
+	}
 
-  function updateProgress() {
-    if (video) {
-      progress = (video.currentTime / video.duration) * 100;
-      currentTime = formatTime(video.currentTime);
-    }
-  }
+	function updateProgress() {
+		if (video) {
+			progress = (video.currentTime / video.duration) * 100;
+			currentTime = formatTime(video.currentTime);
+		}
+	}
 
-  function seekVideo(e) {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const pos = (e.clientX - rect.left) / rect.width;
-    video.currentTime = pos * video.duration;
-  }
+	function seekVideo(e) {
+		const rect = e.currentTarget.getBoundingClientRect();
+		const pos = (e.clientX - rect.left) / rect.width;
+		video.currentTime = pos * video.duration;
+	}
 
-  function toggleModal() {
-    showModal = !showModal;
-    showPointer = showModal;
-  }
+	function toggleModal() {
+		showModal = !showModal;
+		showPointer = showModal;
+	}
 
-  async function showUpgradeOverlay() {
-    showOverlay = true;
-  }
+	async function showUpgradeOverlay() {
+		showOverlay = true;
+	}
 
+	function closeOverlay() {
+		showOverlay = false;
+	}
 
+	onMount(() => {
+		window.createLemonSqueezy();
+		if (video) {
+			video.addEventListener('timeupdate', updateProgress);
+		}
 
-
-  function closeOverlay() {
-    showOverlay = false;
-  }
-
-  onMount(() => {
-    window.createLemonSqueezy()
-    if (video) {
-      video.addEventListener("timeupdate", updateProgress);
-    }
-
-    return () => {
-      if (video) {
-        video.removeEventListener("timeupdate", updateProgress);
-      }
-    };
-  });
+		return () => {
+			if (video) {
+				video.removeEventListener('timeupdate', updateProgress);
+			}
+		};
+	});
 
 	const i18n = getContext('i18n');
 
@@ -181,11 +178,15 @@ function hideTooltip() {
 		></div>
 
 		<div class=" flex max-w-full w-full mx-auto px-1 pt-0.5 bg-transparent">
-			<div class="flex items-center w-full max-w-full">
+			<div
+				class="flex items-center w-full max-w-full"
+				style="flex-wrap: wrap; justify-content: end;"
+			>
 				<div
 					class="{$showSidebar
 						? 'md:hidden'
-						: ''} mr-1 self-start flex flex-none items-center text-gray-600 dark:text-gray-400"
+						: ''} mr-1 self-start flex items-center text-gray-600 dark:text-gray-400"
+					style="flex-wrap: wrap;"
 				>
 					<button
 						id="sidebar-toggle-button"
@@ -211,7 +212,10 @@ function hideTooltip() {
 					{/if}
 				</div>
 
-				<div class="self-start flex flex-none items-center text-gray-600 dark:text-gray-400">
+				<div
+					class="self-start flex items-center text-gray-600 dark:text-gray-400"
+					style="flex-wrap: wrap;"
+				>
 					<!-- <div class="md:hidden flex self-center w-[1px] h-5 mx-2 bg-gray-300 dark:bg-stone-700" /> -->
 					{#if shareEnabled && chat && (chat.id || $temporaryChatEnabled)}
 						<Menu
@@ -248,56 +252,49 @@ function hideTooltip() {
 						</Menu>
 					{/if}
 					<!-- Your AI Credits here -->
-<div
-  class="relative w-fit mx-auto my-5"
-  on:mouseenter={showTooltip}
-	on:mouseleave={hideTooltip}
-	data-credits-trigger
->
-  <div
-    class="flex items-center gap-1 px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 cursor-pointer text-lg font-semibold"
-  >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      class="h-5 w-5"
-      fill="#FFD700"
-      viewBox="0 0 24 24"
-      stroke="#FFD700"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M13 10V3L4 14h7v7l9-11h-7z"
-      />
-    </svg>
-    {formatCredits($animatedCredits)}
-  </div>
+					<div
+						class="relative w-fit mx-auto my-5 mobile-responsive-btn"
+						on:mouseenter={showTooltip}
+						data-credits-trigger
+					>
+						<div
+							class="flex items-center gap-1 px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 cursor-pointer text-lg font-semibold"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="h-5 w-5"
+								fill="#FFD700"
+								viewBox="0 0 24 24"
+								stroke="#FFD700"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M13 10V3L4 14h7v7l9-11h-7z"
+								/>
+							</svg>
+							{formatCredits($animatedCredits)}
+						</div>
 
-  <!-- Tooltip Info -->
-  {#if showCreditsTooltip}
-    <CreditsExplanationTooltip 
-      bind:showPointer 
-      showUpgradeOverlay={showUpgradeOverlay}
-      formatCredits={formatCredits}
-    />
-  {/if}
-</div>
+						<!-- Tooltip Info -->
+						{#if showCreditsTooltip}
+							<CreditsExplanationTooltip bind:showPointer {showUpgradeOverlay} {formatCredits} />
+						{/if}
+					</div>
 
-	<button
-  class="mx-3 px-4 py-1 border border-gray-300 dark:border-gray-600 rounded-full bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition"
-  on:click={() => (showOverlay = true)}
->
-  Upgrade
-</button>
+					<button
+						class="upgrade-button-nav mx-3 px-4 py-1 border border-gray-300 dark:border-gray-600 rounded-full bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+						on:click={() => (showOverlay = true)}
+					>
+						Upgrade
+					</button>
 
-      {#if showOverlay}
-        <UpgradeOverlay 
-          closeOverlay={closeOverlay} 
-        />
-      {/if}
+					{#if showOverlay}
+						<UpgradeOverlay {closeOverlay} />
+					{/if}
 
-<!-- Your AI Credits end here -->
+					<!-- Your AI Credits end here -->
 
 					<Tooltip content={$i18n.t('Controls')}>
 						<button
@@ -410,3 +407,10 @@ function hideTooltip() {
 	{/if}
 </nav>
 
+<style>
+	@media (max-width: 420px) {
+		.upgrade-button-nav {
+			display: none;
+		}
+	}
+</style>

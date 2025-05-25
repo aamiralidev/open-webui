@@ -407,3 +407,19 @@ input[type='number'] {
     z-index: revert-layer !important;
 	}
 }
+
+
+
+/* @media (max-width: 390px) {
+	.mobile-hidden{
+		display: none;
+	}
+	.mobile-responsive-btn{
+        margin-right: 96px;
+	}
+  }
+  @media (max-width: 500px) {
+    .modal-wrapper.s-MJ1Ae97sdrNB {
+        top: 138px !important;
+    }
+} */
